@@ -153,7 +153,7 @@ export default function Page() {
         <div id="editor-preview-container" className="flex-1 min-h-0 flex relative">
           {/* Editor panel */}
           <section
-            className={cn("min-w-0 h-full", mode === "read" ? "hidden" : "block")}
+            className={cn("min-w-0 h-full font-mono", mode === "read" ? "hidden" : "block")}
             style={{ width: mode === "both" ? `${split}%` : "100%" }}
             aria-label="Editor"
           >

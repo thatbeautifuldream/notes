@@ -20,8 +20,7 @@ export function NoteEditor(props: {
       minimap: { enabled: false },
       wordWrap: "on" as const,
       fontSize: 14,
-      fontFamily:
-        'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+      fontFamily: "var(--font-mono)",
       scrollBeyondLastLine: false,
       automaticLayout: true,
       padding: { top: 12, bottom: 12 },
