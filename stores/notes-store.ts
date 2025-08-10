@@ -10,6 +10,7 @@ export type Note = {
   content: string;
   createdAt: number;
   updatedAt: number;
+  pinned?: boolean;
 };
 
 type NotesState = {
@@ -20,6 +21,7 @@ type NotesState = {
   setActive: (id: string | null) => void;
   updateNoteContent: (id: string, content: string) => void;
   renameNote: (id: string, title: string) => void;
+  togglePin: (id: string) => void;
 };
 
 function newNote(): Note {
@@ -34,6 +36,7 @@ function newNote(): Note {
     content: "# New Note\n\nStart writing your markdown...",
     createdAt: now,
     updatedAt: now,
+    pinned: false,
   };
 }
 
@@ -100,11 +103,39 @@ export const useNotesStore = create<NotesState>()(
           ),
         }));
       },
+
+      togglePin: (id) => {
+        set((state) => ({
+          notes: state.notes.map((n) =>
+            n.id === id ? { ...n, pinned: !n.pinned } : n
+          ),
+        }));
+      },
     }),
     {
       name: "notes-store-v1",
       storage: createJSONStorage(() => indexedDBStorage),
-      version: 1,
+      version: 2,
+      migrate: async (persisted, version) => {
+        if (!persisted) return persisted as any;
+        // v1 -> v2: add pinned flag defaulting to false
+        if (version < 2) {
+          try {
+            const state = persisted as {
+              notes?: Note[];
+              activeId?: string | null;
+            };
+            const migratedNotes = (state.notes ?? []).map((n) => ({
+              ...n,
+              pinned: n.pinned ?? false,
+            }));
+            return { ...state, notes: migratedNotes } as any;
+          } catch {
+            return persisted as any;
+          }
+        }
+        return persisted as any;
+      },
       partialize: (state) => ({
         notes: state.notes,
         activeId: state.activeId,
