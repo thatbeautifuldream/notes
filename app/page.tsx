@@ -87,9 +87,9 @@ export default function Page() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className="flex-1 flex flex-col min-w-0">
+      <SidebarInset className="flex-1 flex flex-col min-w-0 h-svh">
         {/* Top bar */}
-        <div className="h-12 border-b border-border flex items-center gap-2 px-2 md:px-3">
+        <div className="h-12 border-b border-border flex items-center gap-2 px-2 md:px-3 sticky top-0 z-10 bg-background">
           <SidebarTrigger aria-label="Toggle sidebar" />
           <div className="flex-1 min-w-0 flex items-center gap-2">
             <Input
@@ -150,10 +150,10 @@ export default function Page() {
         </div>
 
         {/* Editor + Preview */}
-        <div id="editor-preview-container" className="flex-1 min-h-0 flex relative">
+        <div id="editor-preview-container" className="flex-1 min-h-0 flex relative overflow-hidden">
           {/* Editor panel */}
           <section
-            className={cn("min-w-0 h-full font-mono", mode === "read" ? "hidden" : "block")}
+            className={cn("min-w-0 h-full font-mono overflow-auto", mode === "read" ? "hidden" : "block")}
             style={{ width: mode === "both" ? `${split}%` : "100%" }}
             aria-label="Editor"
           >
@@ -189,7 +189,7 @@ export default function Page() {
           {mode !== "write" && (
             <section
               className={cn(
-                "min-w-0 h-full border-l border-border",
+                "min-w-0 h-full border-l border-border overflow-auto",
                 mode === "both" ? "block" : "block w-full"
               )}
               style={{ width: mode === "both" ? `${100 - split}%` : "100%" }}

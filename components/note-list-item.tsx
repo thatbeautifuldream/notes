@@ -70,13 +70,9 @@ export function NoteListItem(props: {
                     <div className="flex flex-col min-w-0">
                         <div className="font-medium truncate leading-5">{props.title || "Untitled"}</div>
                         <div className="text-xs text-muted-foreground flex items-center gap-2 min-w-0">
-                            {preview ? (
-                                <>
-                                    <span className="mr-auto shrink-0 tabular-nums">{dateLabel}</span>
-                                    <span className="truncate text-[0.78rem] leading-4 max-w-[120px]">{preview}</span>
-                                </>
-                            ) : (
-                                <span className="shrink-0 tabular-nums">{dateLabel}</span>
+                            <span className="shrink-0 tabular-nums">{dateLabel}</span>
+                            {preview && (
+                                <span className="truncate text-[0.78rem] leading-4 max-w-[120px]">{preview}</span>
                             )}
                         </div>
                     </div>
