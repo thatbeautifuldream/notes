@@ -39,7 +39,7 @@ type TNotesState = {
 const db = new IdbService<TNoteContent>("notes-db");
 
 function deriveTitle(content: string): string {
-  const textContent = content.replace(/<[^>]*>/g, '').trim();
+  const textContent = content.replace(/<[^>]*>/g, "").trim();
   const firstLine = textContent.split(/\r?\n/).find(Boolean) ?? "";
   const title = firstLine || "Untitled";
   return title.length > 120 ? title.slice(0, 120) + "…" : title;
@@ -73,12 +73,12 @@ export const useNotesStore = create<TNotesState>()((set, get) => ({
         id: crypto.randomUUID(),
         name: "Untitled",
         content: {
-          content: "<p>Start writing...</p>",
+          content: "",
           pinned: false,
         },
         createdAt: now,
         updatedAt: now,
-        size: new Blob(["<p>Start writing...</p>"]).size,
+        size: new Blob([""]).size,
       };
 
       await db.save(record);
@@ -87,7 +87,7 @@ export const useNotesStore = create<TNotesState>()((set, get) => ({
       set((state) => ({
         notes: [note, ...state.notes],
         activeId: note.id,
-        isLoading: false
+        isLoading: false,
       }));
 
       return note.id;
@@ -105,11 +105,12 @@ export const useNotesStore = create<TNotesState>()((set, get) => ({
 
       set((state) => {
         const filtered = state.notes.filter((n) => n.id !== id);
-        const newActive = state.activeId === id ? filtered[0]?.id ?? null : state.activeId;
+        const newActive =
+          state.activeId === id ? filtered[0]?.id ?? null : state.activeId;
         return {
           notes: filtered,
           activeId: newActive,
-          isLoading: false
+          isLoading: false,
         };
       });
     } catch (error) {
@@ -126,17 +127,16 @@ export const useNotesStore = create<TNotesState>()((set, get) => ({
       const note = state.notes.find((n) => n.id === id);
       if (!note) throw new Error("Note not found");
 
-      const newTitle = note.title === "Untitled" || note.title.trim() === ""
-        ? deriveTitle(content)
-        : note.title;
+      const newTitle =
+        note.title === "Untitled" || note.title.trim() === ""
+          ? deriveTitle(content)
+          : note.title;
 
       const now = new Date();
 
       set((state) => ({
         notes: state.notes.map((n) =>
-          n.id === id
-            ? { ...n, content, title: newTitle, updatedAt: now }
-            : n
+          n.id === id ? { ...n, content, title: newTitle, updatedAt: now } : n
         ),
       }));
 
@@ -214,13 +214,13 @@ export const useNotesStore = create<TNotesState>()((set, get) => ({
       set({
         notes,
         isLoading: false,
-        isInitialized: true
+        isInitialized: true,
       });
     } catch (error) {
       set({
         error: (error as Error).message,
         isLoading: false,
-        isInitialized: true
+        isInitialized: true,
       });
       throw error;
     }
@@ -228,7 +228,9 @@ export const useNotesStore = create<TNotesState>()((set, get) => ({
 
   getActive: () => {
     const state = get();
-    return state.activeId ? state.notes.find((n) => n.id === state.activeId) ?? null : null;
+    return state.activeId
+      ? state.notes.find((n) => n.id === state.activeId) ?? null
+      : null;
   },
 
   getAll: () => get().notes,
