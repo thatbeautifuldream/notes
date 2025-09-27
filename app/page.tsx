@@ -1,27 +1,26 @@
 "use client"
 
 import { AppSidebar } from "@/components/app-sidebar"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { useNotesStore } from "@/stores/notes-store"
-import { FilePlus2, MoreVertical, Trash2 } from "lucide-react"
+import { useNotesStore, useNotesInit } from "@/stores/notes-store"
 import { useEffect, useMemo } from "react"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { EditorProvider } from "@/components/ui/kibo-ui/editor"
 
 
 export default function Page() {
-  const { notes, activeId, createNote, deleteNote, setActive, updateNoteContent, renameNote } = useNotesStore()
+  const { notes, activeId, createNote, deleteNote, setActive, updateNoteContent, renameNote, isInitialized, isLoading } = useNotesStore()
+
+  // Initialize the notes store
+  useNotesInit()
 
   useEffect(() => {
-    if (notes.length === 0) {
-      const id = createNote()
-      setActive(id)
-    } else if (!activeId) {
+    if (isInitialized && notes.length === 0) {
+      createNote().then(id => setActive(id))
+    } else if (isInitialized && !activeId && notes.length > 0) {
       setActive(notes[0].id)
     }
-  }, [notes.length])
+  }, [isInitialized, notes.length, activeId, createNote, setActive])
 
   const activeNote = useMemo(() => notes.find((n) => n.id === activeId) ?? null, [notes, activeId])
 
@@ -42,30 +41,6 @@ export default function Page() {
               className="h-9 bg-transparent border-none focus-visible:ring-0 text-base font-medium truncate"
             />
           </div>
-          {activeNote && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Note actions">
-                  <MoreVertical className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => deleteNote(activeNote.id)}>
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete note
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-          <Button
-            onClick={() => {
-              const id = createNote()
-              setActive(id)
-            }}
-          >
-            <FilePlus2 className="h-4 w-4 mr-2" />
-            New
-          </Button>
         </div>
 
         {/* Editor */}

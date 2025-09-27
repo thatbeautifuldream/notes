@@ -16,7 +16,7 @@ export function NoteListItem(props: {
     id: string
     title: string
     active?: boolean
-    updatedAt: number
+    updatedAt: Date
     pinned?: boolean
     onSelect: () => void
     onDelete: () => void
@@ -30,7 +30,7 @@ export function NoteListItem(props: {
         setValue(props.title)
     }, [props.title])
 
-    const dateLabel = getRelativeDateLabel(new Date(props.updatedAt))
+    const dateLabel = getRelativeDateLabel(props.updatedAt)
 
     return (
         <div

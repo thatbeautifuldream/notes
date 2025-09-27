@@ -19,7 +19,7 @@ const themes = [
     },
 ];
 
-export type ThemeSwitcherProps = {
+export type TThemeSwitcherProps = {
     value?: 'light' | 'dark';
     onChange?: (theme: 'light' | 'dark') => void;
     defaultValue?: 'light' | 'dark';
@@ -30,7 +30,7 @@ export const ThemeSwitcher = ({
     onChange,
     defaultValue = 'dark',
     className,
-}: ThemeSwitcherProps) => {
+}: TThemeSwitcherProps) => {
     const [theme, setTheme] = useControllableState({
         defaultProp: defaultValue,
         prop: value,
@@ -43,7 +43,6 @@ export const ThemeSwitcher = ({
         },
         [setTheme]
     );
-    // Prevent hydration mismatch
     useEffect(() => {
         setMounted(true);
     }, []);

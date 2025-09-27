@@ -6,13 +6,13 @@ import { Sidebar as UISidebar, SidebarContent, SidebarHeader, SidebarFooter, Sid
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useNotesStore, type Note } from "@/stores/notes-store"
+import { useNotesStore, type TNote } from "@/stores/notes-store"
 import { NoteListItem } from "@/components/note-list-item"
 import { ThemeSwitcher } from "@/components/theme-toggle"
 import { useTheme } from "next-themes"
 import { motion } from "motion/react"
 
-function groupNotes(notes: Note[]) {
+function groupNotes(notes: TNote[]) {
     const pinned = notes.filter((n) => n.pinned)
     const unpinned = notes.filter((n) => !n.pinned)
 
@@ -23,14 +23,14 @@ function groupNotes(notes: Note[]) {
     const weekStart = todayStart - 7 * 24 * 60 * 60 * 1000
     const monthStart = todayStart - 30 * 24 * 60 * 60 * 1000
 
-    const sections: { label: string; items: Note[] }[] = []
+    const sections: { label: string; items: TNote[] }[] = []
 
     if (pinned.length) sections.push({ label: "Pinned", items: pinned })
-    const today = unpinned.filter((n) => n.updatedAt >= todayStart)
-    const yesterday = unpinned.filter((n) => n.updatedAt < todayStart && n.updatedAt >= yesterdayStart)
-    const prev7 = unpinned.filter((n) => n.updatedAt < yesterdayStart && n.updatedAt >= weekStart)
-    const prev30 = unpinned.filter((n) => n.updatedAt < weekStart && n.updatedAt >= monthStart)
-    const older = unpinned.filter((n) => n.updatedAt < monthStart)
+    const today = unpinned.filter((n) => n.updatedAt.getTime() >= todayStart)
+    const yesterday = unpinned.filter((n) => n.updatedAt.getTime() < todayStart && n.updatedAt.getTime() >= yesterdayStart)
+    const prev7 = unpinned.filter((n) => n.updatedAt.getTime() < yesterdayStart && n.updatedAt.getTime() >= weekStart)
+    const prev30 = unpinned.filter((n) => n.updatedAt.getTime() < weekStart && n.updatedAt.getTime() >= monthStart)
+    const older = unpinned.filter((n) => n.updatedAt.getTime() < monthStart)
 
     if (today.length) sections.push({ label: "Today", items: today })
     if (yesterday.length) sections.push({ label: "Yesterday", items: yesterday })
@@ -38,8 +38,7 @@ function groupNotes(notes: Note[]) {
     if (prev30.length) sections.push({ label: "Previous 30 Days", items: prev30 })
     if (older.length) sections.push({ label: "Older", items: older })
 
-    // Sort each section by updatedAt desc
-    sections.forEach((s) => s.items.sort((a, b) => b.updatedAt - a.updatedAt))
+    sections.forEach((s) => s.items.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()))
     return sections
 }
 
@@ -54,8 +53,8 @@ export function AppSidebar() {
                 <div className="p-2 border-b border-sidebar-border bg-sidebar">
                     <Button
                         className="w-full"
-                        onClick={() => {
-                            const id = createNote()
+                        onClick={async () => {
+                            const id = await createNote()
                             setActive(id)
                         }}
                     >
