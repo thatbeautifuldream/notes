@@ -84,7 +84,6 @@ export function AppSidebar() {
                                                                 <NoteListItem
                                                                     id={n.id}
                                                                     title={n.title}
-                                                                    content={n.content}
                                                                     pinned={n.pinned}
                                                                     active={n.id === activeId}
                                                                     onSelect={() => setActive(n.id)}
@@ -113,7 +112,6 @@ export function AppSidebar() {
                                                 <NoteListItem
                                                     id={n.id}
                                                     title={n.title}
-                                                    content={n.content}
                                                     pinned={n.pinned}
                                                     active={n.id === activeId}
                                                     onSelect={() => setActive(n.id)}

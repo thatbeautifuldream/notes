@@ -33,7 +33,7 @@ function newNote(): Note {
   return {
     id,
     title: "Untitled",
-    content: "# New Note\n\nStart writing your markdown...",
+    content: "<p>Start writing...</p>",
     createdAt: now,
     updatedAt: now,
     pinned: false,
@@ -145,8 +145,9 @@ export const useNotesStore = create<NotesState>()(
 );
 
 function deriveTitle(content: string) {
-  const firstLine = content.split(/\r?\n/).find(Boolean) ?? "";
-  const heading = firstLine.replace(/^#\s*/, "").trim();
-  const title = heading || "Untitled";
+  // Extract text from HTML
+  const textContent = content.replace(/<[^>]*>/g, '').trim();
+  const firstLine = textContent.split(/\r?\n/).find(Boolean) ?? "";
+  const title = firstLine || "Untitled";
   return title.length > 120 ? title.slice(0, 120) + "…" : title;
 }

@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils"
 export function NoteListItem(props: {
     id: string
     title: string
-    content?: string
     active?: boolean
     updatedAt: number
     pinned?: boolean
@@ -31,9 +30,7 @@ export function NoteListItem(props: {
         setValue(props.title)
     }, [props.title])
 
-    const preview = getPreviewFromMarkdown(props.content ?? "")
     const dateLabel = getRelativeDateLabel(new Date(props.updatedAt))
-    // no-op state now that we use a dropdown menu instead of select
 
     return (
         <div
@@ -69,11 +66,8 @@ export function NoteListItem(props: {
                 ) : (
                     <div className="flex flex-col min-w-0">
                         <div className="font-medium truncate leading-5">{props.title || "Untitled"}</div>
-                        <div className="text-xs text-muted-foreground flex items-center gap-2 min-w-0">
+                        <div className="text-xs text-muted-foreground">
                             <span className="shrink-0 tabular-nums">{dateLabel}</span>
-                            {preview && (
-                                <span className="truncate text-[0.78rem] leading-4 max-w-[120px]">{preview}</span>
-                            )}
                         </div>
                     </div>
                 )}
@@ -130,19 +124,6 @@ export function NoteListItem(props: {
     )
 }
 
-function getPreviewFromMarkdown(markdown: string): string {
-    if (!markdown) return "";
-    // Use the first non-empty line that is not a top-level heading as preview
-    const lines = markdown.split(/\r?\n/).filter((l) => l.trim().length > 0)
-    const candidate = (lines[0]?.replace(/^#\s*/, "") === lines[0] ? lines[0] : lines[1]) ?? lines[0] ?? ""
-    const stripped = candidate
-        // remove markdown emphasis/syntax
-        .replace(/[*_`>#-]/g, "")
-        .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1") // links
-        .replace(/!\[[^\]]*\]\([^)]*\)/g, "") // images
-        .trim()
-    return stripped.length > 60 ? stripped.slice(0, 60) + "…" : stripped
-}
 
 function getRelativeDateLabel(date: Date): string {
     const now = new Date()
